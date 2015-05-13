@@ -10,6 +10,9 @@
 #include <QGridLayout>
 #include <QMenu>
 #include <QTabWidget>
+#include <QListWidget>
+#include <QSpinBox>
+#include <QLabel>
 
 //Déclaration de la classe Mainwindow qui servira à gérer la fenetre principale.
 //Cette classe est fille de la classe QWidget

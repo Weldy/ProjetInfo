@@ -7,8 +7,8 @@ Mainwindow::Mainwindow()
     QWidget *tab1 = new QWidget(this) ;
     QTabWidget *mainTab = new QTabWidget(tab1);
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
-    mainTab->setFixedSize(245, 245);
-    mainTab->addTab(createLumiereGroupBox(),"File");
+    mainTab->setFixedSize(800, 500);
+    mainTab->addTab(createLumiereGroupBox(),"Gestion des lumières");
     mainTab->addTab(createObjetGroupBox(),"Objet");
     mainTab->addTab(createBasGroupBox(),"Constante");
 
@@ -16,9 +16,9 @@ Mainwindow::Mainwindow()
     launch->show();
     launch->setFont(QFont("Helvetica",18));
     launch->resize(200,35);
-    launch->move(25,250);
+    launch->move(25,360);
 
-    this->resize(300,300);
+    this->resize(800,550);
     setWindowTitle(tr("EnLight'INT"));  //Titre de la fenetre.
 
 }
@@ -49,13 +49,41 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     QGroupBox *g_lumiere = new QGroupBox(tr("Lights"));
     //Création PushButtons
     QPushButton *p_addLight = new QPushButton(tr("add"));
-    QPushButton *p_setLight = new QPushButton(tr("set"));
+    //QPushButton *p_setLight = new QPushButton(tr("set"));
     QPushButton *p_delLight = new QPushButton(tr("delete"));
+    QListWidget *listeLumiere = new QListWidget(this);
+    new QListWidgetItem(tr("Lumière principale"),listeLumiere);
+    QPushButton *p_selectColor = new QPushButton("Selection couleur", this);
+    QSpinBox *b_posX = new QSpinBox(this);
+    QLabel *l_posX = new QLabel("X : ");
+    l_posX->setAlignment(Qt::AlignRight);
+    QSpinBox *b_posY = new QSpinBox(this);
+    QLabel *l_posY = new QLabel("Y : ");
+    QSpinBox *b_posZ = new QSpinBox(this);
+    QLabel *l_posZ = new QLabel("Z : ");
+    QSpinBox *b_ray = new QSpinBox(this);
+    QLabel *l_ray = new QLabel("Rayon : ");
+    QCheckBox *c_active = new QCheckBox(tr("Lumière Activée"));
+    QCheckBox *c_ombre = new QCheckBox(tr("Ombre Activée"));
+    QCheckBox *c_gi = new QCheckBox(tr("GI Activée"));
     //Organisation via GridLayout
     QGridLayout *lumiereGrid = new QGridLayout(g_lumiere);
     lumiereGrid->addWidget(p_addLight, 0, 0);
-    lumiereGrid->addWidget(p_setLight, 0, 1);
-    lumiereGrid->addWidget(p_delLight, 0, 2);
+    //lumiereGrid->addWidget(p_setLight, 0, 1);
+    lumiereGrid->addWidget(p_delLight, 0, 1);
+    lumiereGrid->addWidget(listeLumiere, 1,0,7,3);
+    lumiereGrid->addWidget(p_selectColor, 1,4,1,3);
+    lumiereGrid->addWidget(l_posX,2,3,1,1);
+    lumiereGrid->addWidget(b_posX, 2,4,1,1);
+    lumiereGrid->addWidget(l_posY,2,5,1,1);
+    lumiereGrid->addWidget(b_posY, 2,6,1,1);
+    lumiereGrid->addWidget(l_posZ,2,7,1,1);
+    lumiereGrid->addWidget(b_posZ, 2,8,1,1);
+    lumiereGrid->addWidget(l_ray,3,3,1,2);
+    lumiereGrid->addWidget(b_ray,3,6,1,2);
+    lumiereGrid->addWidget(c_active,4,3,1,1);
+    lumiereGrid->addWidget(c_ombre,5,3,1,1);
+    lumiereGrid->addWidget(c_gi,6,3,1,1);
 
     return g_lumiere; //return GroupeBox créée
 }
