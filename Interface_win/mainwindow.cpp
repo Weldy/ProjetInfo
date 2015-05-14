@@ -11,12 +11,14 @@ Mainwindow::Mainwindow()
     mainTab->addTab(createLumiereGroupBox(),"Gestion des lumières");
     mainTab->addTab(createObjetGroupBox(),"Objet");
     mainTab->addTab(createBasGroupBox(),"Constante");
+    mainTab->setIconSize(QSize(20,50));
+    mainTab->setTabIcon(0,QIcon("images/smile.png"));
 
-    QPushButton *launch = new QPushButton("Lancer le moteur", this);
-    launch->show();
-    launch->setFont(QFont("Helvetica",18));
-    launch->resize(200,35);
-    launch->move(25,360);
+   // QPushButton *launch = new QPushButton("Lancer le moteur", this);
+    //launch->show();
+    //launch->setFont(QFont("Helvetica",18));
+    //launch->resize(200,35);
+    //launch->move(25,360);
 
     this->resize(800,550);
     setWindowTitle(tr("EnLight'INT"));  //Titre de la fenetre.

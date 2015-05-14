@@ -13,6 +13,11 @@
 #include <QListWidget>
 #include <QSpinBox>
 #include <QLabel>
+#include <QString>
+
+
+
+
 
 //Déclaration de la classe Mainwindow qui servira à gérer la fenetre principale.
 //Cette classe est fille de la classe QWidget
@@ -35,5 +40,6 @@ private:
     QGroupBox *createBasGroupBox();
     void createMainWindowConnection();
 };
+
 
 #endif // MAFENETRE_H
