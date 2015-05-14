@@ -56,15 +56,22 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     QListWidget *listeLumiere = new QListWidget(this);
     new QListWidgetItem(tr("Lumière principale"),listeLumiere);
     QPushButton *p_selectColor = new QPushButton("Selection couleur", this);
+    QLabel *l_color = new QLabel();
+    l_color->setStyleSheet("QLabel { background-color : red;}");
+    //l_color->setAutoFillBackground(true);
+    // l_color->setStyleSheet("QLabel { background-color : "+color+";}");
     QSpinBox *b_posX = new QSpinBox(this);
     QLabel *l_posX = new QLabel("X : ");
     l_posX->setAlignment(Qt::AlignRight);
     QSpinBox *b_posY = new QSpinBox(this);
     QLabel *l_posY = new QLabel("Y : ");
+    l_posY->setAlignment(Qt::AlignRight);
     QSpinBox *b_posZ = new QSpinBox(this);
     QLabel *l_posZ = new QLabel("Z : ");
+    l_posZ->setAlignment(Qt::AlignRight);
     QSpinBox *b_ray = new QSpinBox(this);
     QLabel *l_ray = new QLabel("Rayon : ");
+    l_ray->setAlignment(Qt::AlignRight);
     QCheckBox *c_active = new QCheckBox(tr("Lumière Activée"));
     QCheckBox *c_ombre = new QCheckBox(tr("Ombre Activée"));
     QCheckBox *c_gi = new QCheckBox(tr("GI Activée"));
@@ -75,14 +82,15 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     lumiereGrid->addWidget(p_delLight, 0, 1);
     lumiereGrid->addWidget(listeLumiere, 1,0,7,3);
     lumiereGrid->addWidget(p_selectColor, 1,4,1,3);
+    lumiereGrid->addWidget(l_color,1,3,1,1);
     lumiereGrid->addWidget(l_posX,2,3,1,1);
     lumiereGrid->addWidget(b_posX, 2,4,1,1);
     lumiereGrid->addWidget(l_posY,2,5,1,1);
     lumiereGrid->addWidget(b_posY, 2,6,1,1);
     lumiereGrid->addWidget(l_posZ,2,7,1,1);
     lumiereGrid->addWidget(b_posZ, 2,8,1,1);
-    lumiereGrid->addWidget(l_ray,3,3,1,2);
-    lumiereGrid->addWidget(b_ray,3,6,1,2);
+    lumiereGrid->addWidget(l_ray,3,3,1,1);
+    lumiereGrid->addWidget(b_ray,3,4,1,2);
     lumiereGrid->addWidget(c_active,4,3,1,1);
     lumiereGrid->addWidget(c_ombre,5,3,1,1);
     lumiereGrid->addWidget(c_gi,6,3,1,1);
@@ -122,6 +130,11 @@ QGroupBox *Mainwindow::createBasGroupBox()
 
     return g_bas; //return GroupeBox créée
 }
+
+/*void Mainwindow::namePopUp()
+{
+    QString lightName = QInputDialog::getText(this, "Nom", "Quel nom pour cette lumière ?");
+}*/
 
 //Connection SIGNAL/SLOT de la fenetre principale.
 /*void Mainwindow::createMainWindowConnection()

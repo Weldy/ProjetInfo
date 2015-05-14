@@ -39,6 +39,7 @@ private:
     QGroupBox *createObjetGroupBox();
     QGroupBox *createBasGroupBox();
     void createMainWindowConnection();
+    void namePopUp();
 };
 
 
