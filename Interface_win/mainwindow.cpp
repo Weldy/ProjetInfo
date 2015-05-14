@@ -5,6 +5,7 @@ Mainwindow::Mainwindow()
     : QWidget()
 {
     QWidget *tab1 = new QWidget(this) ;
+    lightColor = QColor(100,200,200);
     QTabWidget *mainTab = new QTabWidget(tab1);
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
     mainTab->setFixedSize(800, 500);
@@ -56,10 +57,10 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     QListWidget *listeLumiere = new QListWidget(this);
     new QListWidgetItem(tr("Lumière principale"),listeLumiere);
     QPushButton *p_selectColor = new QPushButton("Selection couleur", this);
-    QLabel *l_color = new QLabel();
-    l_color->setStyleSheet("QLabel { background-color : red;}");
-    //l_color->setAutoFillBackground(true);
-    // l_color->setStyleSheet("QLabel { background-color : "+color+";}");
+    l_color = new QLabel();
+    l_color->setAutoFillBackground(true);
+    QString iStyle ="background-color : rgb(%1,%2,%3);";
+    l_color->setStyleSheet(iStyle.arg(lightColor.red()).arg(lightColor.green()).arg(lightColor.blue()));
     QSpinBox *b_posX = new QSpinBox(this);
     QLabel *l_posX = new QLabel("X : ");
     l_posX->setAlignment(Qt::AlignRight);
@@ -94,6 +95,9 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     lumiereGrid->addWidget(c_active,4,3,1,1);
     lumiereGrid->addWidget(c_ombre,5,3,1,1);
     lumiereGrid->addWidget(c_gi,6,3,1,1);
+
+    QObject::connect(p_addLight, SIGNAL(clicked()), this, SLOT(namePopUp()));
+    QObject::connect(p_selectColor, SIGNAL(clicked()), this, SLOT(colorLightPick()));
 
     return g_lumiere; //return GroupeBox créée
 }
@@ -131,10 +135,18 @@ QGroupBox *Mainwindow::createBasGroupBox()
     return g_bas; //return GroupeBox créée
 }
 
-/*void Mainwindow::namePopUp()
+void Mainwindow::namePopUp()
 {
     QString lightName = QInputDialog::getText(this, "Nom", "Quel nom pour cette lumière ?");
-}*/
+}
+
+void Mainwindow::colorLightPick()
+{
+    this->lightColor = QColorDialog::getColor(lightColor, this);
+    QString iStyle ="background-color : rgb(%1,%2,%3);";
+    this->l_color->setStyleSheet(iStyle.arg(lightColor.red()).arg(lightColor.green()).arg(lightColor.blue()));
+}
+
 
 //Connection SIGNAL/SLOT de la fenetre principale.
 /*void Mainwindow::createMainWindowConnection()

@@ -14,6 +14,10 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QString>
+#include <QInputDialog>
+#include <QColorDialog>
+#include <QPalette>
+#include <QColor>
 
 
 
@@ -30,6 +34,10 @@ public:
 
     Mainwindow(); //Déclaration du constructeur.
 
+public slots:
+    void namePopUp();
+    void colorLightPick();
+
 private:
 
 //Methode private qui seront utilisées seulement par le constructeur pour déclarer les GroupBox utilisées.
@@ -39,7 +47,10 @@ private:
     QGroupBox *createObjetGroupBox();
     QGroupBox *createBasGroupBox();
     void createMainWindowConnection();
-    void namePopUp();
+
+    QColor lightColor;
+    QLabel *l_color;
+
 };
 
 
