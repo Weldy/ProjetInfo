@@ -17,11 +17,19 @@ Mainwindow::Mainwindow()
     QTabWidget *mainTab = new QTabWidget(tab1);
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
     mainTab->setFixedSize(800, 500);
+    mainTab->addTab(createObjetGroupBox(),"Intro");
     mainTab->addTab(createLumiereGroupBox(),"Gestion des lumières");
-    mainTab->addTab(createObjetGroupBox(),"Objet");
-    mainTab->addTab(createBasGroupBox(),"Constante");
+    mainTab->addTab(createBasGroupBox(),"Occlusion ambiante");
+    mainTab->addTab(createObjetGroupBox(),"Logs");
+    mainTab->addTab(createObjetGroupBox(),"Mode Expert");
+    mainTab->addTab(createObjetGroupBox(),"A propos");
     mainTab->setIconSize(QSize(20,50));
-    mainTab->setTabIcon(0,QIcon("images/smile.png"));
+    mainTab->setTabIcon(0,QIcon("images/info.png"));
+    mainTab->setTabIcon(1,QIcon("images/light.png"));
+    mainTab->setTabIcon(2,QIcon("images/param.png"));
+    mainTab->setTabIcon(3,QIcon("images/logs.png"));
+    mainTab->setTabIcon(4,QIcon("images/expert.png"));
+    mainTab->setTabIcon(5,QIcon("images/about.png"));
 
    // QPushButton *launch = new QPushButton("Lancer le moteur", this);
     //launch->show();
