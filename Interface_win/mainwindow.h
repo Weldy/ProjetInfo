@@ -1,23 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QLayout>
-#include <QGridLayout>
-#include <QMenu>
-#include <QTabWidget>
-#include <QListWidget>
-#include <QSpinBox>
-#include <QLabel>
-#include <QString>
-#include <QInputDialog>
-#include <QColorDialog>
-#include <QPalette>
-#include <QColor>
+#include "include.h"
 
 
 
@@ -37,6 +21,8 @@ public:
 public slots:
     void namePopUp();
     void colorLightPick();
+    void refreshLight(QListWidgetItem *index);
+    void deleteLight();
 
 private:
 
@@ -48,8 +34,14 @@ private:
     QGroupBox *createBasGroupBox();
     void createMainWindowConnection();
 
+
     QColor lightColor;
     QLabel *l_color;
+    int lightNumber;
+    Settings settings;
+    QListWidgetItem *lightCurrent;
+
+    QListWidget *listeLumiere;
 
 };
 

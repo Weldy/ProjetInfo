@@ -4,8 +4,16 @@
 Mainwindow::Mainwindow()
     : QWidget()
 {
-    QWidget *tab1 = new QWidget(this) ;
+    //init
     lightColor = QColor(100,200,200);
+
+    settings.occlusion=false;
+    settings.fichier ="truc";
+    LightSetting *lum1 = new LightSetting{0,"Lumière Principale",QColor("white"),QVector3D(0,0,0),10,false,false,false};
+    settings.light[0] = lum1;
+    lightNumber =1;
+
+    QWidget *tab1 = new QWidget(this) ;
     QTabWidget *mainTab = new QTabWidget(tab1);
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
     mainTab->setFixedSize(800, 500);
@@ -54,8 +62,9 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     QPushButton *p_addLight = new QPushButton(tr("add"));
     //QPushButton *p_setLight = new QPushButton(tr("set"));
     QPushButton *p_delLight = new QPushButton(tr("delete"));
-    QListWidget *listeLumiere = new QListWidget(this);
-    new QListWidgetItem(tr("Lumière principale"),listeLumiere);
+    listeLumiere = new QListWidget(this);
+    new QListWidgetItem(settings.light[0]->name,listeLumiere,lightNumber);
+    this->lightCurrent = this->listeLumiere->item(0);
     QPushButton *p_selectColor = new QPushButton("Selection couleur", this);
     l_color = new QLabel();
     l_color->setAutoFillBackground(true);
@@ -98,6 +107,8 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
 
     QObject::connect(p_addLight, SIGNAL(clicked()), this, SLOT(namePopUp()));
     QObject::connect(p_selectColor, SIGNAL(clicked()), this, SLOT(colorLightPick()));
+    QObject::connect(listeLumiere,SIGNAL(itemActivated(QListWidgetItem *)),this,SLOT(refreshLight(QListWidgetItem *)));
+    QObject::connect(p_delLight, SIGNAL(clicked()), this, SLOT(deleteLight()));
 
     return g_lumiere; //return GroupeBox créée
 }
@@ -137,7 +148,29 @@ QGroupBox *Mainwindow::createBasGroupBox()
 
 void Mainwindow::namePopUp()
 {
-    QString lightName = QInputDialog::getText(this, "Nom", "Quel nom pour cette lumière ?");
+    if(lightNumber<=10){
+        QString lightName = QInputDialog::getText(this, "Nom", "Quel nom pour cette lumière ?");
+        LightSetting *newLum = new LightSetting{lightNumber,lightName,QColor("white"),QVector3D(0,0,0),10,false,false,false};
+        int test =0;
+        while(settings.light[test] == NULL){
+            test++;
+        }
+        settings.light[test]= newLum;
+        new QListWidgetItem(settings.light[test]->name,listeLumiere,lightNumber);
+        lightNumber ++;
+    }
+}
+
+void Mainwindow::refreshLight(QListWidgetItem *index)
+{
+    this->lightCurrent= index;
+}
+
+void Mainwindow::deleteLight()
+{
+    this->listeLumiere->takeItem(this->listeLumiere->row(this->listeLumiere->currentItem()));
+    this->settings.light[lightCurrent->type()];
+    lightNumber --;
 }
 
 void Mainwindow::colorLightPick()
