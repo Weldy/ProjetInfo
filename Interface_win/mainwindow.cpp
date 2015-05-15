@@ -5,17 +5,19 @@ Mainwindow::Mainwindow()
     : QWidget()
 {
     //init
-    lightColor = QColor(100,200,200);
 
     settings.occlusion=false;
-    settings.fichier ="truc";
-    LightSetting *lum1 = new LightSetting{0,"Lumière Principale",QColor("white"),QVector3D(0,0,0),10,false,false,false};
+    settings.fichier ="truc"; //inutile à l'état actuel
+
+    LightSetting *lum1 = new LightSetting{0,"Lumière Principale",QColor(100,200,200),QVector3D(0,0,0),0,false,false,false};
     settings.light[0] = lum1;
     lightNumber =1;
 
     QWidget *tab1 = new QWidget(this) ;
     QTabWidget *mainTab = new QTabWidget(tab1);
+
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
+
     mainTab->setFixedSize(800, 500);
     mainTab->addTab(createObjetGroupBox(),"Intro");
     mainTab->addTab(createLumiereGroupBox(),"Gestion des lumières");
@@ -68,35 +70,41 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     QGroupBox *g_lumiere = new QGroupBox(tr("Lights"));
     //Création PushButtons
     QPushButton *p_addLight = new QPushButton(tr("add"));
-    //QPushButton *p_setLight = new QPushButton(tr("set"));
     QPushButton *p_delLight = new QPushButton(tr("delete"));
+
     listeLumiere = new QListWidget(this);
-    new QListWidgetItem(settings.light[0]->name,listeLumiere,lightNumber);
+    new QListWidgetItem(settings.light[0]->name,listeLumiere,0);
     this->lightCurrent = this->listeLumiere->item(0);
+
     QPushButton *p_selectColor = new QPushButton("Selection couleur", this);
     l_color = new QLabel();
     l_color->setAutoFillBackground(true);
     QString iStyle ="background-color : rgb(%1,%2,%3);";
-    l_color->setStyleSheet(iStyle.arg(lightColor.red()).arg(lightColor.green()).arg(lightColor.blue()));
-    QSpinBox *b_posX = new QSpinBox(this);
+    l_color->setStyleSheet(iStyle.arg(this->settings.light[0]->couleur.red()).arg(this->settings.light[0]->couleur.green()).arg(this->settings.light[0]->couleur.blue()));
+
+    b_posX = new QSpinBox(this);
+    b_posX->setRange(-1000,1000);
     QLabel *l_posX = new QLabel("X : ");
     l_posX->setAlignment(Qt::AlignRight);
-    QSpinBox *b_posY = new QSpinBox(this);
+    b_posY = new QSpinBox(this);
+    b_posY->setRange(-1000,1000);
     QLabel *l_posY = new QLabel("Y : ");
     l_posY->setAlignment(Qt::AlignRight);
-    QSpinBox *b_posZ = new QSpinBox(this);
+    b_posZ = new QSpinBox(this);
+    b_posZ->setRange(-1000,1000);
     QLabel *l_posZ = new QLabel("Z : ");
     l_posZ->setAlignment(Qt::AlignRight);
-    QSpinBox *b_ray = new QSpinBox(this);
+    b_ray = new QSpinBox(this);
+    b_ray->setMaximum(2000);
     QLabel *l_ray = new QLabel("Rayon : ");
     l_ray->setAlignment(Qt::AlignRight);
-    QCheckBox *c_active = new QCheckBox(tr("Lumière Activée"));
-    QCheckBox *c_ombre = new QCheckBox(tr("Ombre Activée"));
-    QCheckBox *c_gi = new QCheckBox(tr("GI Activée"));
+    c_active = new QCheckBox(tr("Lumière Activée"));
+    c_ombre = new QCheckBox(tr("Ombre Activée"));
+    c_gi = new QCheckBox(tr("GI Activée"));
+
     //Organisation via GridLayout
     QGridLayout *lumiereGrid = new QGridLayout(g_lumiere);
     lumiereGrid->addWidget(p_addLight, 0, 0);
-    //lumiereGrid->addWidget(p_setLight, 0, 1);
     lumiereGrid->addWidget(p_delLight, 0, 1);
     lumiereGrid->addWidget(listeLumiere, 1,0,7,3);
     lumiereGrid->addWidget(p_selectColor, 1,4,1,3);
@@ -114,9 +122,23 @@ QGroupBox *Mainwindow::createLumiereGroupBox()
     lumiereGrid->addWidget(c_gi,6,3,1,1);
 
     QObject::connect(p_addLight, SIGNAL(clicked()), this, SLOT(namePopUp()));
-    QObject::connect(p_selectColor, SIGNAL(clicked()), this, SLOT(colorLightPick()));
-    QObject::connect(listeLumiere,SIGNAL(itemActivated(QListWidgetItem *)),this,SLOT(refreshLight(QListWidgetItem *)));
     QObject::connect(p_delLight, SIGNAL(clicked()), this, SLOT(deleteLight()));
+
+    QObject::connect(p_selectColor, SIGNAL(clicked()), this, SLOT(colorLightPick()));
+
+    QObject::connect(b_posX, SIGNAL(valueChanged(int)), this, SLOT(changePosX(int)));
+    QObject::connect(b_posY, SIGNAL(valueChanged(int)), this, SLOT(changePosY(int)));
+    QObject::connect(b_posZ, SIGNAL(valueChanged(int)), this, SLOT(changePosZ(int)));
+
+    QObject::connect(b_ray, SIGNAL(valueChanged(int)), this, SLOT(changeRay(int)));
+
+    QObject::connect(c_active, SIGNAL(stateChanged(int)), this, SLOT(enableLight(int)));
+    QObject::connect(c_ombre, SIGNAL(stateChanged(int)), this, SLOT(enableShad(int)));
+    QObject::connect(c_gi, SIGNAL(stateChanged(int)), this, SLOT(enableGI(int)));
+
+
+    QObject::connect(listeLumiere,SIGNAL(itemClicked(QListWidgetItem *)),this,SLOT(refreshLight(QListWidgetItem *)));
+
 
     return g_lumiere; //return GroupeBox créée
 }
@@ -151,20 +173,22 @@ QGroupBox *Mainwindow::createBasGroupBox()
     QGridLayout *basGrid = new QGridLayout(g_bas);
     basGrid->addWidget(c_occlusion, 0, 0);
 
+    QObject::connect(c_occlusion, SIGNAL(stateChanged(int)), this, SLOT(enableOccl(int)));
+
     return g_bas; //return GroupeBox créée
 }
 
 void Mainwindow::namePopUp()
 {
-    if(lightNumber<=10){
+    if(lightNumber<10){
         QString lightName = QInputDialog::getText(this, "Nom", "Quel nom pour cette lumière ?");
-        LightSetting *newLum = new LightSetting{lightNumber,lightName,QColor("white"),QVector3D(0,0,0),10,false,false,false};
+        LightSetting *newLum = new LightSetting{lightNumber,lightName,QColor("white"),QVector3D(0,0,0),0,false,false,false};
         int test =0;
-        while(settings.light[test] == NULL){
+        while(settings.light[test] != NULL){
             test++;
         }
         settings.light[test]= newLum;
-        new QListWidgetItem(settings.light[test]->name,listeLumiere,lightNumber);
+        new QListWidgetItem(settings.light[test]->name,listeLumiere,test);
         lightNumber ++;
     }
 }
@@ -172,6 +196,15 @@ void Mainwindow::namePopUp()
 void Mainwindow::refreshLight(QListWidgetItem *index)
 {
     this->lightCurrent= index;
+    QString iStyle ="background-color : rgb(%1,%2,%3);";
+    this->l_color->setStyleSheet(iStyle.arg(this->settings.light[lightCurrent->type()]->couleur.red()).arg(this->settings.light[lightCurrent->type()]->couleur.green()).arg(this->settings.light[lightCurrent->type()]->couleur.blue()));
+    this->b_posX->setValue(this->settings.light[lightCurrent->type()]->pos.x());
+    this->b_posY->setValue(this->settings.light[lightCurrent->type()]->pos.y());
+    this->b_posZ->setValue(this->settings.light[lightCurrent->type()]->pos.z());
+    this->b_ray->setValue(this->settings.light[lightCurrent->type()]->radius);
+    this->c_active->setChecked(this->settings.light[lightCurrent->type()]->enabled);
+    this->c_ombre->setChecked(this->settings.light[lightCurrent->type()]->ombre);
+    this->c_gi->setChecked(this->settings.light[lightCurrent->type()]->gi);
 }
 
 void Mainwindow::deleteLight()
@@ -183,11 +216,46 @@ void Mainwindow::deleteLight()
 
 void Mainwindow::colorLightPick()
 {
-    this->lightColor = QColorDialog::getColor(lightColor, this);
+    QColor newColor = QColorDialog::getColor(this->settings.light[lightCurrent->type()]->couleur, this);
+    this->settings.light[lightCurrent->type()]->couleur = newColor;
     QString iStyle ="background-color : rgb(%1,%2,%3);";
-    this->l_color->setStyleSheet(iStyle.arg(lightColor.red()).arg(lightColor.green()).arg(lightColor.blue()));
+    this->l_color->setStyleSheet(iStyle.arg(this->settings.light[lightCurrent->type()]->couleur.red()).arg(this->settings.light[lightCurrent->type()]->couleur.green()).arg(this->settings.light[lightCurrent->type()]->couleur.blue()));
 }
 
+void Mainwindow::changePosX(int newPos)
+{
+    this->settings.light[lightCurrent->type()]->pos = QVector3D(newPos,this->settings.light[lightCurrent->type()]->pos.y(),this->settings.light[lightCurrent->type()]->pos.z());
+}
+void Mainwindow::changePosY(int newPos)
+{
+    this->settings.light[lightCurrent->type()]->pos = QVector3D(this->settings.light[lightCurrent->type()]->pos.x(),newPos,this->settings.light[lightCurrent->type()]->pos.z());
+}
+void Mainwindow::changePosZ(int newPos)
+{
+    this->settings.light[lightCurrent->type()]->pos= QVector3D(this->settings.light[lightCurrent->type()]->pos.x(),this->settings.light[lightCurrent->type()]->pos.y(),newPos);
+}
+void Mainwindow::changeRay(int newRad)
+{
+    this->settings.light[lightCurrent->type()]->radius = newRad;
+}
+
+void Mainwindow::enableLight(int state)
+{
+    this->settings.light[lightCurrent->type()]->enabled = state;
+}
+void Mainwindow::enableShad(int state)
+{
+    this->settings.light[lightCurrent->type()]->ombre = state;
+}
+void Mainwindow::enableGI(int state)
+{
+    this->settings.light[lightCurrent->type()]->gi = state;
+}
+
+void Mainwindow::enableOccl(int state)
+{
+    this->settings.occlusion = state;
+}
 
 //Connection SIGNAL/SLOT de la fenetre principale.
 /*void Mainwindow::createMainWindowConnection()
