@@ -20,6 +20,8 @@
 #include <QPalette>
 #include <QColor>
 #include <QVector3D>
+#include <QFrame>
+#include <QTextEdit>
 
 
 

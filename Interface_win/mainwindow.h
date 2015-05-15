@@ -28,12 +28,18 @@ public slots:
     void enableShad(int state);
     void enableGI(int state);
     void enableOccl(int state);
+    void changeText(QString newLog);
+
+signals:
+    void logsChanged(QString);
 
 private:
 
 //Methode private qui seront utilisées seulement par le constructeur pour déclarer les GroupBox utilisées.
 //Ce découpage permet une meilleure lisibilité et modularité du code. (Inspiré du modèle de la Doc).
     QGroupBox *createMenuGroupBox();
+    QFrame *createIntroGroupBox();
+    QGroupBox *createLogsGroupBox();
     QGroupBox *createLumiereGroupBox();
     QGroupBox *createObjetGroupBox();
     QGroupBox *createBasGroupBox();
@@ -56,6 +62,8 @@ private:
     QCheckBox *c_active;
     QCheckBox *c_ombre;
     QCheckBox *c_gi;
+
+    QTextEdit *t_logs;
 
 
 

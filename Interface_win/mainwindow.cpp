@@ -19,10 +19,10 @@ Mainwindow::Mainwindow()
     //QGridLayout *mainGrid = new QGridLayout;    //GridLayout principale de la fenetre principale. Permet d'organiser les GroupBox.
 
     mainTab->setFixedSize(800, 500);
-    mainTab->addTab(createObjetGroupBox(),"Intro");
+    mainTab->addTab(createIntroGroupBox(),"Intro");
     mainTab->addTab(createLumiereGroupBox(),"Gestion des lumières");
     mainTab->addTab(createBasGroupBox(),"Occlusion ambiante");
-    mainTab->addTab(createObjetGroupBox(),"Logs");
+    mainTab->addTab(createLogsGroupBox(),"Logs");
     mainTab->addTab(createObjetGroupBox(),"Mode Expert");
     mainTab->addTab(createObjetGroupBox(),"A propos");
     mainTab->setIconSize(QSize(30,50));
@@ -39,7 +39,7 @@ Mainwindow::Mainwindow()
     //launch->resize(200,35);
     //launch->move(25,360);
 
-    this->resize(800,550);
+    this->resize(850,550);
     setWindowTitle(tr("EnLight'INT"));  //Titre de la fenetre.
 
 }
@@ -161,6 +161,55 @@ QGroupBox *Mainwindow::createObjetGroupBox()
     return g_item; //return GroupBox créée
 }
 
+QFrame *Mainwindow::createIntroGroupBox()
+{
+    //Création GroupBox
+    QFrame *f_intro = new QFrame();
+    QFrame *f_1 = new QFrame(f_intro);
+    QFrame *f_2 = new QFrame(f_intro);
+    QFrame *f_3 = new QFrame(f_intro);
+    f_intro->setFrameShape(QFrame::StyledPanel);
+    //Création Label
+    QLabel *l_iTitle = new QLabel("EnLight'Int");
+    l_iTitle->setFont(QFont("Arial",18));
+    QLabel *l_iText = new QLabel("  Ce programme permet de changer en temps réel les parmamètres d'un moteur de rendu 3D. \n Il comporte plusieurs fenetres :  \n"
+    "- La gestion des lumières permet d'ajouter jusqu'à 10 lumières dans la scène\n- L'occlusion ambiante peut être activée ou désactivée\n"
+    "- Les logs permetent de suivre l'évolution du rendu\n- Le mode expert permet d'interagir directement avec le code en C++\n"
+    "\n  Pour en apprendre plus n'hésitez pas à consulter la section à propos ;)");
+    l_iText->setFont(QFont("Arial",11));
+    //Organisation via GridLayout
+    QGridLayout *itemGrid = new QGridLayout(f_intro);
+    itemGrid->addWidget(l_iTitle, 0, 2);
+    itemGrid->addWidget(f_1, 1, 0);
+    itemGrid->addWidget(f_2, 1, 4,1,2);
+    itemGrid->addWidget(f_3, 4, 0,1,2);
+    itemGrid->addWidget(l_iText, 1, 1,2,2);
+
+    return f_intro; //return intro créée
+}
+
+QGroupBox *Mainwindow::createLogsGroupBox()
+{
+    //Création GroupBox
+    QGroupBox *g_item = new QGroupBox(tr("Engine logs"));
+    QFrame *f_1 = new QFrame(g_item);
+    //Création textarea
+    t_logs = new QTextEdit("Console initialisée");
+    t_logs->setReadOnly(true);
+    //Organisation via GridLayout
+    QGridLayout *itemGrid = new QGridLayout(g_item);
+    itemGrid->addWidget(t_logs, 1, 1);
+    itemGrid->addWidget(f_1, 0, 0,1,3);
+
+    QObject::connect(this, SIGNAL(logsChanged(QString)), this, SLOT(changeText(QString)));
+
+    QString logs = "logs initialisés";
+    emit logsChanged(logs);
+
+    return g_item; //return GroupBox créée
+}
+
+
 //Créer GroupBox des options annexes. CheckBox occlusion.
 QGroupBox *Mainwindow::createBasGroupBox()
 {
@@ -190,6 +239,8 @@ void Mainwindow::namePopUp()
         settings.light[test]= newLum;
         new QListWidgetItem(settings.light[test]->name,listeLumiere,test);
         lightNumber ++;
+        QString logs = lightName + " : Nouvelle lumière crée !";
+        emit logsChanged(logs);
     }
 }
 
@@ -209,9 +260,19 @@ void Mainwindow::refreshLight(QListWidgetItem *index)
 
 void Mainwindow::deleteLight()
 {
+    if (lightCurrent != NULL){
     this->listeLumiere->takeItem(this->listeLumiere->row(this->listeLumiere->currentItem()));
-    this->settings.light[lightCurrent->type()];
-    lightNumber --;
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Suppresion en cours";
+    emit logsChanged(logs);
+    delete this->settings.light[lightCurrent->type()];
+    logs = "... Suppresion effectuée !";
+    emit logsChanged(logs);
+    lightCurrent = NULL;
+    lightNumber --;}
+    else{QString logs = "Erreur selection : il faut cliquer correctement sur la lumière";
+        emit logsChanged(logs);}
+
+
 }
 
 void Mainwindow::colorLightPick()
@@ -220,41 +281,76 @@ void Mainwindow::colorLightPick()
     this->settings.light[lightCurrent->type()]->couleur = newColor;
     QString iStyle ="background-color : rgb(%1,%2,%3);";
     this->l_color->setStyleSheet(iStyle.arg(this->settings.light[lightCurrent->type()]->couleur.red()).arg(this->settings.light[lightCurrent->type()]->couleur.green()).arg(this->settings.light[lightCurrent->type()]->couleur.blue()));
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Nouvelle couleur --> " + this->settings.light[lightCurrent->type()]->couleur.name();
+    emit logsChanged(logs);
 }
 
 void Mainwindow::changePosX(int newPos)
 {
     this->settings.light[lightCurrent->type()]->pos = QVector3D(newPos,this->settings.light[lightCurrent->type()]->pos.y(),this->settings.light[lightCurrent->type()]->pos.z());
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Nouvelle position en x --> [" + QString::number(this->settings.light[lightCurrent->type()]->pos.x()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.y()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.z()) + "]";
+    emit logsChanged(logs);
 }
 void Mainwindow::changePosY(int newPos)
 {
     this->settings.light[lightCurrent->type()]->pos = QVector3D(this->settings.light[lightCurrent->type()]->pos.x(),newPos,this->settings.light[lightCurrent->type()]->pos.z());
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Nouvelle position en y --> [" + QString::number(this->settings.light[lightCurrent->type()]->pos.x()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.y()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.z()) + "]";
+    emit logsChanged(logs);
 }
 void Mainwindow::changePosZ(int newPos)
 {
     this->settings.light[lightCurrent->type()]->pos= QVector3D(this->settings.light[lightCurrent->type()]->pos.x(),this->settings.light[lightCurrent->type()]->pos.y(),newPos);
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Nouvelle position en z --> [" + QString::number(this->settings.light[lightCurrent->type()]->pos.x()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.y()) + "," + QString::number(this->settings.light[lightCurrent->type()]->pos.z()) + "]";
+    emit logsChanged(logs);
 }
 void Mainwindow::changeRay(int newRad)
 {
     this->settings.light[lightCurrent->type()]->radius = newRad;
+    QString logs = this->settings.light[lightCurrent->type()]->name + " : Nouveau rayon --> " + QString::number(newRad) ;
+    emit logsChanged(logs);
 }
 
 void Mainwindow::enableLight(int state)
 {
     this->settings.light[lightCurrent->type()]->enabled = state;
+    QString logs;
+    if (state ==0){
+     logs = this->settings.light[lightCurrent->type()]->name + " : Lumière désactivée" ;
+    }else {logs = this->settings.light[lightCurrent->type()]->name + " : Lumière activée";}
+    emit logsChanged(logs);
 }
 void Mainwindow::enableShad(int state)
 {
     this->settings.light[lightCurrent->type()]->ombre = state;
+    QString logs;
+    if (state ==0){
+     logs = this->settings.light[lightCurrent->type()]->name + " : Ombres désactivées" ;
+    }else {logs = this->settings.light[lightCurrent->type()]->name + " : Ombres activées";}
+    emit logsChanged(logs);
 }
 void Mainwindow::enableGI(int state)
 {
     this->settings.light[lightCurrent->type()]->gi = state;
+    QString logs;
+    if (state ==0){
+     logs = this->settings.light[lightCurrent->type()]->name + " : Illumination globale désactivée" ;
+    }else {logs = this->settings.light[lightCurrent->type()]->name + " : Illumination globale activée";}
+    emit logsChanged(logs);
 }
 
 void Mainwindow::enableOccl(int state)
 {
     this->settings.occlusion = state;
+    QString logs;
+    if (state ==0){
+     logs = "Occlusion ambiante désactivée";
+    }else {logs = "Occlusion ambiante activée";}
+    emit logsChanged(logs);
+}
+
+void Mainwindow::changeText(QString newLog)
+{
+    this->t_logs->append(newLog);
 }
 
 //Connection SIGNAL/SLOT de la fenetre principale.
