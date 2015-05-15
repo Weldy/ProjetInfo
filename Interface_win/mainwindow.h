@@ -4,9 +4,6 @@
 #include "include.h"
 
 
-
-
-
 //Déclaration de la classe Mainwindow qui servira à gérer la fenetre principale.
 //Cette classe est fille de la classe QWidget
 class Mainwindow : public QWidget
@@ -32,10 +29,10 @@ private:
     QGroupBox *createLumiereGroupBox();
     QGroupBox *createObjetGroupBox();
     QGroupBox *createBasGroupBox();
-    void createMainWindowConnection();
+    //void createMainWindowConnection();
 
 
-    QColor lightColor;
+    QColor lightColor; //amené à disparaitre
     QLabel *l_color;
     int lightNumber;
     Settings settings;

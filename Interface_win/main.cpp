@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
 
     "QAbstractItemView{background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0.1 #646464, stop: 1 #5d5d5d);}"
 
-    "QLineEdit{background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0 #646464, stop: 1 #5d5d5d);padding: 1px; border-style: solid;border: 1px solid #1e1e1e;border-radius: 5;}"
+    "QLineEdit{background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0 #646464, stop: 1 #5d5d5d);padding: 1px; border-style: solid;border: 1px solid #1e1e1e;}"
 
-    "QPushButton{color: #b1b1b1;background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);border-width: 1px; border-color: #1e1e1e;border-style: solid;border-radius: 6;padding: 3px;font-size: 12px;padding-left: 5px;padding-right: 5px;}"
+    "QPushButton{color: #b1b1b1;background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);border-width: 1px; border-color: #1e1e1e;border-style: solid;padding: 3px;font-size: 12px;padding-left: 5px;padding-right: 5px;}"
 
     "QPushButton:pressed{background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);}"
 
@@ -104,15 +104,15 @@ int main(int argc, char *argv[])
 
     "QTabWidget::pane {border: 1px solid #444;top: 1px;}"
 
-    "QTabBar::tab:last{margin-right: 0; border-top-right-radius: 3px;}"
+    "QTabBar::tab:last{margin-right: 0;}"
 
-    "QTabBar::tab:first:!selected{margin-left: 0px;border-top-left-radius: 3px;}"
+    "QTabBar::tab:first:!selected{margin-left: 0px;}"
 
     "QTabBar::tab:!selected{color: #b1b1b1;border-bottom-style: solid;margin-top: 3px;background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);}"
 
-    "QTabBar::tab:selected{border-top-left-radius: 3px;border-top-right-radius: 3px;margin-bottom: 0px;}"
+    "QTabBar::tab:selected{margin-bottom: 0px;}"
 
-    "QTabBar::tab:!selected:hover{border-top-left-radius: 3px;border-top-right-radius: 3px; background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 #ffaa00);}"
+    "QTabBar::tab:!selected:hover{border-top-width:6px; border-top-color: #ffaa00; border-style: solid;}"
 
     "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{color: #b1b1b1;background-color: #323232;border: 1px solid #b1b1b1;border-radius: 6px;}"
 
@@ -133,10 +133,10 @@ int main(int argc, char *argv[])
     QApplication app(argc,  argv);
     app.setStyle("plastique");
 
-
     Mainwindow fenetre;
     fenetre.show();
     fenetre.setStyleSheet(mStyle);
+
 
     return app.exec();
 }

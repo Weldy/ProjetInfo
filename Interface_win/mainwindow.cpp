@@ -23,7 +23,7 @@ Mainwindow::Mainwindow()
     mainTab->addTab(createObjetGroupBox(),"Logs");
     mainTab->addTab(createObjetGroupBox(),"Mode Expert");
     mainTab->addTab(createObjetGroupBox(),"A propos");
-    mainTab->setIconSize(QSize(20,50));
+    mainTab->setIconSize(QSize(30,50));
     mainTab->setTabIcon(0,QIcon("images/info.png"));
     mainTab->setTabIcon(1,QIcon("images/light.png"));
     mainTab->setTabIcon(2,QIcon("images/param.png"));
